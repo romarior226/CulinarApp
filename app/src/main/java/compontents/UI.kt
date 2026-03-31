@@ -1,0 +1,94 @@
+package compontents
+
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import domain.Recipe
+import presentation.MainViewModel
+
+@Composable
+fun CulinarBoard(recipe: Recipe) {
+    val context = LocalContext.current.applicationContext
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .clickable(
+                enabled = true,
+                interactionSource = null,
+                indication = null,
+                onClick = {
+                    Toast.makeText(
+                        context, "CLICKED", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = recipe.imageId),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(80.dp),
+                contentScale = ContentScale.Crop
+
+            )
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center
+
+            ) {
+                Text(
+                    recipe.name,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = recipe.category.toString(),
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+}
+@Composable
+fun ColumnOfCulinarBoards(viewModel: MainViewModel) {
+    val list by viewModel._recipeList.collectAsState(emptyList())
+    LazyColumn {
+        items(list) { recipe ->
+            CulinarBoard(recipe)
+        }
+    }
+}
