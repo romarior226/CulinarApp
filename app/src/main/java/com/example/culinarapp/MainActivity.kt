@@ -4,20 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.culinarapp.ui.theme.CulinarAppTheme
-import compontents.ColumnOfCulinarBoards
-import presentation.MainViewModel
+import androidx.navigation.compose.rememberNavController
+import navigation.AppNavGraph
+import presentation.ReciepeListViewModedl
 
-class MainActivity : ComponentActivity() {
-    val viewModel = MainViewModel()
+class MainActivity() : ComponentActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CulinarAppTheme {
-                ColumnOfCulinarBoards(viewModel)
-            }
+            val navController = rememberNavController()
+            val viewModel = ReciepeListViewModedl() // Або через viewModel() якщо підключена ліба
+            AppNavGraph(navController, viewModel)
         }
     }
 }

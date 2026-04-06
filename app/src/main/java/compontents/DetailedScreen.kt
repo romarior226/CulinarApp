@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.culinarapp.R
 import domain.Recipe
 
 @Composable
@@ -47,7 +46,7 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
                 textAlign = TextAlign.Center
             )
         }
-    }) {
+    }, modifier = Modifier.padding(vertical = 50.dp)) {
         Column(
             modifier = Modifier
                 .verticalScroll(state = rememberScrollState())
@@ -59,7 +58,7 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
                     .padding(horizontal = 20.dp)
                     .height(250.dp)
                     .fillMaxWidth(),
-                painter = painterResource(R.drawable.ic_food_background),
+                painter = painterResource(recipe.imageId),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
@@ -90,6 +89,7 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
+                    .padding(horizontal = 10.dp)
             ) {
                 Text(text = "Ingridients: ", fontSize = 20.sp)
                 Column(Modifier.padding(horizontal = 10.dp)) {
@@ -107,11 +107,12 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
+                    .padding(horizontal = 10.dp)
             ) {
                 Text(text = "Instruction: ", fontSize = 20.sp)
                 Column(Modifier.padding(horizontal = 10.dp)) {
                     Text(
-                        text = "Text",
+                        text = recipe.instruction,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(vertical = 5.dp)
                     )

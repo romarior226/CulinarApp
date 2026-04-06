@@ -1,6 +1,5 @@
 package compontents
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,11 +26,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.culinarapp.R
 import domain.Recipe
-import presentation.MainViewModel
+import presentation.ReciepeListViewModedl
 
 @Composable
-fun CulinarBoard(recipe: Recipe) {
+fun CulinarBoard(
+    recipe: Recipe,
+    onRecipeClickListener: (Recipe) -> Unit,
+    onFavouriteClickListener: (Recipe) -> Unit
+) {
     val context = LocalContext.current.applicationContext
     Card(
         modifier = Modifier
@@ -40,9 +45,7 @@ fun CulinarBoard(recipe: Recipe) {
                 interactionSource = null,
                 indication = null,
                 onClick = {
-                    Toast.makeText(
-                        context, "CLICKED", Toast.LENGTH_SHORT
-                    ).show()
+                    onRecipeClickListener(recipe)
                 }
             )
     ) {
@@ -80,15 +83,31 @@ fun CulinarBoard(recipe: Recipe) {
                     fontSize = 18.sp
                 )
             }
+            IconButton(
+                onClick = {
+                    onFavouriteClickListener(recipe)
+                },
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_background),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
+
 @Composable
-fun ColumnOfCulinarBoards(viewModel: MainViewModel) {
+fun ColumnOfCulinarBoards(
+    viewModel: ReciepeListViewModedl,
+    onRecipeClickListener: (Recipe) -> Unit,
+    onFavouriteClickListener: (Recipe) -> Unit
+) {
     val list by viewModel._recipeList.collectAsState(emptyList())
-    LazyColumn {
+    LazyColumn(modifier = Modifier.padding(vertical = 25.dp)) {
         items(list) { recipe ->
-            CulinarBoard(recipe)
+            CulinarBoard(recipe, onRecipeClickListener, onFavouriteClickListener)
         }
     }
 }
