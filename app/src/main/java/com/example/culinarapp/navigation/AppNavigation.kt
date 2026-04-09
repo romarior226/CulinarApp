@@ -1,5 +1,6 @@
 package com.example.culinarapp.navigation
 
+import RecipeDetailScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -8,8 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.culinarapp.ui.components.ColumnOfCulinaryBoards
-import com.example.culinarapp.ui.screen.RecipeDetailScreen
+import com.example.culinarapp.presentation.ui.components.ColumnOfCulinaryBoards
 import com.example.culinarapp.presentation.FavouriteScreenViewModel
 import com.example.culinarapp.presentation.RecipeListViewModel
 
@@ -32,22 +32,23 @@ fun AppNavGraph(
                     navHostController.navigate(route)
                 },
                 onFavouriteClickListener = {
-                    favouriteViewModel.toggleFavourite(it)
+                    recipeViewModel.toggleFavourite(it)
                 }
             )
 
         }
         composable(Screen.FavouriteScreen.route) {
-            val list by favouriteViewModel.favoriteRecipe.collectAsState()
+            val favouriteList by favouriteViewModel.favouriteRecipes.collectAsState()
             ColumnOfCulinaryBoards(
-                list,
+                recipeList = favouriteList,
                 onRecipeClickListener = {
                     val route = Screen.DetailedFoodScreen.getRouteWithArgs(it.name)
                     navHostController.navigate(route)
+                },
+                onFavouriteClickListener = {
+                    recipeViewModel.toggleFavourite(it)
                 }
-            ) {
-                favouriteViewModel.toggleFavourite(it)
-            }
+            )
         }
         composable(
             route = Screen.DetailedFoodScreen.route,
