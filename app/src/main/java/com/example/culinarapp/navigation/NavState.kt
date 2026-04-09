@@ -1,4 +1,4 @@
-package navigation
+package com.example.culinarapp.navigation
 
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHost

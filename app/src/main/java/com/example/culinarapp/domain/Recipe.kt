@@ -1,4 +1,4 @@
-package domain
+package com.example.culinarapp.domain
 
 import com.example.culinarapp.R
 

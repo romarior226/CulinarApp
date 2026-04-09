@@ -1,4 +1,4 @@
-package compontents
+package com.example.culinarapp.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -22,10 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import domain.Recipe
+import com.example.culinarapp.domain.Recipe
 
 @Composable
 fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
+
     Scaffold(topBar = {
         Row(
             modifier = Modifier

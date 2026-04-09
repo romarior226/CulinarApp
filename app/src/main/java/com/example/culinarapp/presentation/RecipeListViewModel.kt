@@ -1,11 +1,12 @@
-package presentation
+package com.example.culinarapp.presentation
 
 import androidx.lifecycle.ViewModel
-import domain.Recipe
+import com.example.culinarapp.domain.Recipe
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class ReciepeListViewModedl : ViewModel() {
-    val _recipeList =
+class RecipeListViewModel : ViewModel() {
+    private val _recipeList =
         MutableStateFlow(
             listOf(
                 Recipe(
@@ -30,4 +31,5 @@ class ReciepeListViewModedl : ViewModel() {
                 ),
             )
         )
+    val recipeList: StateFlow<List<Recipe>> = _recipeList
 }
