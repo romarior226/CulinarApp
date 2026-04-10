@@ -1,3 +1,5 @@
+package com.example.culinarapp.presentation.ui.screen
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -5,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.culinarapp.domain.models.Recipe
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +60,7 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
 
 @Composable
 fun RecipeContent(recipe: Recipe, modifier: Modifier = Modifier) {
+    val imageUri = recipe.imageUri
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,12 +74,21 @@ fun RecipeContent(recipe: Recipe, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(250.dp)
         ) {
-            Image(
-                painter = painterResource(recipe.imageId),
-                contentDescription = recipe.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (imageUri != null) {
+                AsyncImage(
+                    model = imageUri,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(recipe.imageId),
+                    contentDescription = recipe.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
         Column(
             modifier = Modifier.fillMaxWidth(),

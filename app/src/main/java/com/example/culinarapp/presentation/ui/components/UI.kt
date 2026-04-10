@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.culinarapp.domain.models.Category
 import com.example.culinarapp.domain.models.Recipe
 
 
@@ -36,7 +37,15 @@ fun ColumnOfCulinaryBoards(
 @Composable
 fun PreviewBoards() {
     ColumnOfCulinaryBoards(
-        recipeList = listOf(Recipe("Test")),
+        recipeList = listOf(Recipe(
+            1,
+            name = "text",
+            category = Category.TASTY,
+            imageId = TODO() ,
+            ingridients = TODO(),
+            instruction = TODO(),
+            isFavourite = TODO()
+        )),
         onRecipeClickListener = {},
         onFavouriteClickListener = {}
     )

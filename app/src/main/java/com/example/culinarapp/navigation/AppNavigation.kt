@@ -1,6 +1,6 @@
 package com.example.culinarapp.navigation
 
-import RecipeDetailScreen
+import com.example.culinarapp.presentation.ui.screen.RecipeDetailScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.culinarapp.presentation.ui.components.ColumnOfCulinaryBoards
 import com.example.culinarapp.presentation.FavouriteScreenViewModel
 import com.example.culinarapp.presentation.RecipeListViewModel
+import com.example.culinarapp.presentation.ui.screen.RecipeAddScreen
 
 @Composable
 fun AppNavGraph(
@@ -37,8 +38,17 @@ fun AppNavGraph(
             )
 
         }
+        composable(Screen.AddScreen.route) {
+            RecipeAddScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onSaveClick = { recipe ->
+                    recipeViewModel.addRecipe(recipe)
+                    navHostController.popBackStack()
+                }
+            )
+        }
         composable(Screen.FavouriteScreen.route) {
-            val favouriteList by favouriteViewModel.favouriteRecipes.collectAsState()
+            val favouriteList by favouriteViewModel.favouriteRecipe.collectAsState()
             ColumnOfCulinaryBoards(
                 recipeList = favouriteList,
                 onRecipeClickListener = {

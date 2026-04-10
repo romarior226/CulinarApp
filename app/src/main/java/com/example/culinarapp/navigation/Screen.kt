@@ -5,6 +5,8 @@ sealed class Screen(
 ) {
     object ListScreen : Screen(LIST_SCREEN)
 
+    object AddScreen : Screen(ADD_SCREEN)
+
     object FavouriteScreen : Screen(FAVOURITE_SCREEN)
     object DetailedFoodScreen : Screen(DETAILED_SCREEN) {
         const val ROUTE_FOR_ARGS = "detailed_screen"
@@ -16,6 +18,7 @@ sealed class Screen(
 
     companion object {
 
+        const val ADD_SCREEN = "adding_screen"
         const val FAVOURITE_SCREEN = "favourite_screen"
         const val LIST_SCREEN = "list_screen"
         const val DETAILED_SCREEN = "detailed_screen/{recipeName}"

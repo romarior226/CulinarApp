@@ -49,9 +49,18 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1") // Annotation processor
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    implementation("androidx.activity:activity-ktx:1.8.0")
+// For Activities
+    implementation("androidx.fragment:fragment-ktx:1.6.0")
+// For Fragments
+    implementation("androidx.activity:activity-compose:1.8.2") // або новіша
     implementation("com.google.dagger:hilt-android:2.57.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     // 2. Compose BOM (Сам керує версіями всіх Compose-бібліотек!)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
