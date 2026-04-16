@@ -6,11 +6,12 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.culinarapp.domain.models.Recipe
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
     @Query("SELECT * FROM recipes")
-    suspend fun getAllRecipes(): List<RecipeDbModel>
+    fun getAllRecipes(): Flow<List<RecipeDbModel>>
 
     @Insert
     suspend fun insertExpense(recipe: RecipeDbModel): Long

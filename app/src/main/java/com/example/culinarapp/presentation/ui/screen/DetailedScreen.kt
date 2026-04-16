@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.culinarapp.R
 import com.example.culinarapp.domain.models.Recipe
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun RecipeDetailScreen(recipe: Recipe, onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Рецепт", style = MaterialTheme.typography.titleLarge) },
+                title = { Text("Recipe", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -74,21 +75,15 @@ fun RecipeContent(recipe: Recipe, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(250.dp)
         ) {
-            if (imageUri != null) {
                 AsyncImage(
                     model = imageUri,
                     contentDescription = null,
+                    fallback = painterResource(id = R.drawable.images), // Покаже цю картинку, якщо imageUri == null
+                    error = painterResource(id = R.drawable.images), // Покаже цю картинку, якщо файл за URI був видалений або пошкоджений
+                    placeholder = painterResource(id = R.drawable.images), // (Опційно) Покаже цю картинку, поки справжня завантажується
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-            } else {
-                Image(
-                    painter = painterResource(recipe.imageId),
-                    contentDescription = recipe.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
         }
         Column(
             modifier = Modifier.fillMaxWidth(),

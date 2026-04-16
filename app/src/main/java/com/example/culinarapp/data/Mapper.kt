@@ -7,7 +7,7 @@ fun Recipe.toDbModel() : RecipeDbModel{
         id = this.id,
         name = this.name,
         category = this.category,
-        imageId = this.imageId,
+        imagePath = this.imageUri,
         ingridients = this.ingridients,
         instruction = this.instruction,
         isFavourite = this.isFavourite
@@ -18,7 +18,7 @@ fun RecipeDbModel.toEntity() : Recipe{
         id = this.id,
         name = this.name,
         category = this.category,
-        imageId = this.imageId,
+        imageUri = this.imagePath,
         ingridients = this.ingridients,
         instruction = this.instruction,
         isFavourite = this.isFavourite

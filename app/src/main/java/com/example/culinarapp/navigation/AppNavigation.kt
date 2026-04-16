@@ -4,13 +4,13 @@ import com.example.culinarapp.presentation.ui.screen.RecipeDetailScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.culinarapp.presentation.ui.components.ColumnOfCulinaryBoards
-import com.example.culinarapp.presentation.FavouriteScreenViewModel
 import com.example.culinarapp.presentation.RecipeListViewModel
 import com.example.culinarapp.presentation.ui.screen.RecipeAddScreen
 
@@ -18,14 +18,13 @@ import com.example.culinarapp.presentation.ui.screen.RecipeAddScreen
 fun AppNavGraph(
     navHostController: NavHostController,
     recipeViewModel: RecipeListViewModel,
-    favouriteViewModel: FavouriteScreenViewModel
 ) {
     NavHost(
         navController = navHostController,
         startDestination = Screen.ListScreen.route
     ) {
         composable(Screen.ListScreen.route) {
-            val list by recipeViewModel.recipeList.collectAsState()
+            val list by recipeViewModel.recipeList.collectAsStateWithLifecycle()
             ColumnOfCulinaryBoards(
                 list,
                 onRecipeClickListener = {
@@ -34,7 +33,10 @@ fun AppNavGraph(
                 },
                 onFavouriteClickListener = {
                     recipeViewModel.toggleFavourite(it)
-                }
+                },
+                onSwipeElement = {
+                    recipeViewModel.deleteRecipe(it)
+                },
             )
 
         }
@@ -48,7 +50,7 @@ fun AppNavGraph(
             )
         }
         composable(Screen.FavouriteScreen.route) {
-            val favouriteList by favouriteViewModel.favouriteRecipe.collectAsState()
+            val favouriteList by recipeViewModel.favouriteList.collectAsStateWithLifecycle()
             ColumnOfCulinaryBoards(
                 recipeList = favouriteList,
                 onRecipeClickListener = {
@@ -57,7 +59,11 @@ fun AppNavGraph(
                 },
                 onFavouriteClickListener = {
                     recipeViewModel.toggleFavourite(it)
-                }
+                },
+                onSwipeElement = {
+
+                },
+                isSwiped = false
             )
         }
         composable(

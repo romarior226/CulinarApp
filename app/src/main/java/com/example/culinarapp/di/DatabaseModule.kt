@@ -1,7 +1,6 @@
 package com.example.culinarapp.di
 
 import android.content.Context
-import androidx.room.Database
 import com.example.culinarapp.data.AppDataBase
 import com.example.culinarapp.data.RecipeDao
 import dagger.Module

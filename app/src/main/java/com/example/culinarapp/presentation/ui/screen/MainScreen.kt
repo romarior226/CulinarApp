@@ -10,14 +10,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.culinarapp.navigation.AppNavGraph
 import com.example.culinarapp.navigation.Screen
-import com.example.culinarapp.presentation.FavouriteScreenViewModel
 import com.example.culinarapp.presentation.RecipeListViewModel
 import com.example.culinarapp.presentation.ui.components.BottomBar
 
 @Composable
 fun MainScreen(
     recipeViewModel: RecipeListViewModel,
-    favouriteViewModel: FavouriteScreenViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -46,8 +44,7 @@ fun MainScreen(
         ) {
             AppNavGraph(
                 navHostController = navController,
-                recipeViewModel = recipeViewModel,
-                favouriteViewModel = favouriteViewModel
+                recipeViewModel = recipeViewModel
             )
         }
     }

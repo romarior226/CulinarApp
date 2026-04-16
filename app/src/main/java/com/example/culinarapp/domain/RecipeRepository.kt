@@ -1,10 +1,11 @@
 package com.example.culinarapp.domain
 
 import com.example.culinarapp.domain.models.Recipe
+import kotlinx.coroutines.flow.Flow
 
 interface RecipeRepository {
 
-    suspend fun getAllRecipeList() : List<Recipe>
+    fun getAllRecipeListAsFlow() : Flow<List<Recipe>>
 
     suspend fun addRecipe(recipe: Recipe): Long
 
