@@ -46,7 +46,7 @@ fun AppNavGraph(
                 onSaveClick = { recipe ->
                     recipeViewModel.addRecipe(recipe)
                     navHostController.popBackStack()
-                }
+                },
             )
         }
         composable(Screen.FavouriteScreen.route) {

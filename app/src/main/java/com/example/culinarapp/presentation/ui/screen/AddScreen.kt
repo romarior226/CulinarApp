@@ -10,19 +10,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,11 +56,16 @@ import com.example.culinarapp.presentation.ui.theme.veryLightRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeAddScreen(onBackClick: () -> Unit, onSaveClick: (Recipe) -> Unit) {
+fun RecipeAddScreen(
+    onBackClick: () -> Unit,
+    onSaveClick: (Recipe) -> Unit,
+) {
     var ingredients by remember { mutableStateOf(listOf<String>()) }
     var instruction by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val isDataValid = name.isNotBlank() && ingredients.isNotEmpty() && instruction.isNotBlank()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -76,16 +82,20 @@ fun RecipeAddScreen(onBackClick: () -> Unit, onSaveClick: (Recipe) -> Unit) {
         }, bottomBar = {
             IconButton(
                 onClick = {
-                    onSaveClick(
-                        Recipe(
-                            name = name,
-                            ingridients = ingredients,
-                            instruction = instruction,
-                            imageUri = selectedImageUri?.toString()
+                    if (isDataValid) {
+                        onSaveClick(
+                            Recipe(
+                                name = name,
+                                ingridients = ingredients,
+                                instruction = instruction,
+                                imageUri = selectedImageUri?.toString()
+                            )
                         )
-                    )
+                    }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)
             ) {
                 Icon(Icons.Default.Save, contentDescription = null)
             }
@@ -93,10 +103,11 @@ fun RecipeAddScreen(onBackClick: () -> Unit, onSaveClick: (Recipe) -> Unit) {
     ) { it ->
         Column(Modifier.padding(it)) {
             TextField(
-                label = { Text("reicpe name") },
+                label = { Text("name") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
+                    .padding(horizontal = 10.dp)
+                    .clip(shape = RoundedCornerShape(30)),
                 value = name,
                 onValueChange = {
                     name = it
@@ -105,7 +116,7 @@ fun RecipeAddScreen(onBackClick: () -> Unit, onSaveClick: (Recipe) -> Unit) {
             RecipeAddSection { ingredient ->
                 ingredients += ingredient
             }
-            AddInstruction(instruction) {
+            AddInstruction {
                 instruction = it
             }
             RecipeAddImage(
@@ -141,7 +152,7 @@ fun RecipeAddImage(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(vertical = 10.dp)
+            .padding(vertical = 20.dp)
             .fillMaxWidth()
     ) {
         if (selectedImageUri != null) {
@@ -149,13 +160,13 @@ fun RecipeAddImage(
                 model = selectedImageUri,
                 contentDescription = null,
                 modifier = Modifier
+                    .padding(horizontal = 10.dp)
                     .size(80.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(30)),
                 contentScale = ContentScale.Crop
             )
         } else {
             Image(
-
                 painter = painterResource(R.drawable.images),
                 contentDescription = null,
                 modifier = Modifier
@@ -169,7 +180,9 @@ fun RecipeAddImage(
             text = "Chose photo",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 10.dp).weight(1f),
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .weight(1f),
             textAlign = TextAlign.Center
         )
         IconButton(
@@ -187,8 +200,10 @@ fun RecipeAddImage(
 
 @Composable
 fun RecipeAddSection(onSaveClick: (String) -> Unit) {
-    val ingredients = remember { mutableListOf<String>("test1", "test2", "test3") }
-    var showTextField by remember { mutableStateOf(true) }
+    val ingredients = remember {
+        mutableStateListOf<String>()
+    }
+    var showTextField by remember { mutableStateOf(false) }
     var currentIngredient by remember { mutableStateOf("test") }
     Column {
         Row(
@@ -242,24 +257,24 @@ fun RecipeAddSection(onSaveClick: (String) -> Unit) {
 
             }
         }
-        Ing(ingredients)
-
+        Ingredients(ingredients) {
+            ingredients.remove(it)
+        }
 
     }
 }
 
 @Composable
-fun Ing(ingredients: List<String>) {
-    LazyRow(
+fun Ingredients(ingredients: List<String>, onDeleteClick: (String) -> Unit) {
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-
+            .padding(vertical = 20.dp, horizontal = 10.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        items(ingredients) {
+        ingredients.forEach { item ->
             Row(
-
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .background(color = veryLightRed, shape = RoundedCornerShape(30))
@@ -269,13 +284,13 @@ fun Ing(ingredients: List<String>) {
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     fontSize = 12.sp,
-                    text = it
+                    text = item
                 )
                 Spacer(Modifier.width(10.dp))
                 IconButton(
                     modifier = Modifier.size(14.dp),
                     onClick = {
-
+                        onDeleteClick(item)
                     }
                 ) {
                     Icon(imageVector = Icons.Default.Clear, contentDescription = null)
@@ -287,9 +302,10 @@ fun Ing(ingredients: List<String>) {
 }
 
 @Composable
-fun AddInstruction(instruction: String, onSaveClick: (String) -> Unit) {
+fun AddInstruction(onSaveClick: (String) -> Unit) {
     var showTextField by remember { mutableStateOf(true) }
-    var currentInstruction by remember { mutableStateOf("instruction") }
+    var currentInstruction by remember { mutableStateOf("") }
+    var currentIcon by remember { mutableStateOf(Icons.Default.Add) }
     Column(Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -326,25 +342,23 @@ fun AddInstruction(instruction: String, onSaveClick: (String) -> Unit) {
                     value = currentInstruction,
                     onValueChange = {
                         currentInstruction = it
+                        currentIcon = Icons.Default.Add
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(shape = RoundedCornerShape(30))
                 )
                 IconButton(
                     onClick = {
                         onSaveClick(currentInstruction)
+                        currentIcon = Icons.Default.Check
                     },
                     Modifier
                         .padding(horizontal = 10.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                    Icon(imageVector = currentIcon, contentDescription = null)
                 }
             }
-            Text(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
-                text = currentInstruction,
-                fontSize = 16.sp
-            )
-
 
         }
     }
@@ -352,8 +366,8 @@ fun AddInstruction(instruction: String, onSaveClick: (String) -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun IngPreview() {
-    Ing(listOf("test1 ", "test2", "test3"))
+fun IngredientsPreview() {
+    Ingredients(listOf("test1 ", "test2", "test3"), {})
 }
 
 @Preview
