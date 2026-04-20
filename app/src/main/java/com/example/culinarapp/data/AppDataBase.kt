@@ -5,29 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.culinarapp.data.dao.IngredientDao
+import com.example.culinarapp.data.dao.RecipeDao
+import com.example.culinarapp.data.entity.IngredientsDbModel
+import com.example.culinarapp.data.entity.RecipeDbModel
 
-@Database(entities = [RecipeDbModel::class], version = 2)
+@Database(entities = [RecipeDbModel::class , IngredientsDbModel::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
 
     abstract fun recipeDao(): RecipeDao
+    abstract fun ingredientDao(): IngredientDao
 
-    companion object {
-        @Volatile
-        private var INSTANCE: AppDataBase? = null
-
-        fun getDatabase(context: Context): AppDataBase {
-            return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context = context,
-                    klass = AppDataBase::class.java,
-                    name = "recipeDatabase"
-                )
-                    .fallbackToDestructiveMigration()
-                    .build().also {
-                        INSTANCE = it
-                    }
-            }
-        }
-    }
 }

@@ -1,8 +1,11 @@
 package com.example.culinarapp.data
 
+import com.example.culinarapp.data.entity.IngredientsDbModel
+import com.example.culinarapp.data.entity.RecipeDbModel
+import com.example.culinarapp.domain.models.Ingredient
 import com.example.culinarapp.domain.models.Recipe
 
-fun Recipe.toDbModel() : RecipeDbModel{
+fun Recipe.toDbModel(): RecipeDbModel {
     return RecipeDbModel(
         id = this.id,
         name = this.name,
@@ -13,7 +16,8 @@ fun Recipe.toDbModel() : RecipeDbModel{
         isFavourite = this.isFavourite
     )
 }
-fun RecipeDbModel.toEntity() : Recipe{
+
+fun RecipeDbModel.toModel(): Recipe {
     return Recipe(
         id = this.id,
         name = this.name,
@@ -23,4 +27,11 @@ fun RecipeDbModel.toEntity() : Recipe{
         instruction = this.instruction,
         isFavourite = this.isFavourite
     )
+}
+
+fun IngredientsDbModel.toModel(): Ingredient {
+    return Ingredient(this.name)
+}
+fun Ingredient.toDbModel(): IngredientsDbModel {
+    return IngredientsDbModel(this.name)
 }

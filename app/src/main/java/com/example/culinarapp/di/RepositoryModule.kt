@@ -1,6 +1,6 @@
 package com.example.culinarapp.di
 
-import com.example.culinarapp.data.RecipeRepositoryImpl
+import com.example.culinarapp.data.repo.RecipeRepositoryImpl
 import com.example.culinarapp.domain.RecipeRepository
 import dagger.Binds
 import dagger.Module

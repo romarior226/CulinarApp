@@ -34,8 +34,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,79 +50,108 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.culinarapp.R
-import com.example.culinarapp.domain.models.Recipe
+import com.example.culinarapp.presentation.EditRecipeViewModel
 import com.example.culinarapp.presentation.ui.theme.veryLightRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeAddScreen(
     onBackClick: () -> Unit,
-    onSaveClick: (Recipe) -> Unit,
+    recipeId: Long? = null,
+    viewModel: EditRecipeViewModel = hiltViewModel(),
 ) {
-    var ingredients by remember { mutableStateOf(listOf<String>()) }
-    var instruction by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val uiState by viewModel.state.collectAsState()
 
-    val isDataValid = name.isNotBlank() && ingredients.isNotEmpty() && instruction.isNotBlank()
+    LaunchedEffect(recipeId) {
+        if (recipeId != null && recipeId != -1L) {
+            viewModel.loadRecipe(recipeId)
+        }
+    }
+
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) onBackClick()
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Add recipe", style = MaterialTheme.typography.titleLarge) },
+                title = {
+                    Text(
+                        if (uiState.isEditMode) "Edit recipe" else "Add recipe",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад"
+                            contentDescription = "null"
                         )
                     }
                 }
             )
         }, bottomBar = {
-            IconButton(
-                onClick = {
-                    if (isDataValid) {
-                        onSaveClick(
-                            Recipe(
-                                name = name,
-                                ingridients = ingredients,
-                                instruction = instruction,
-                                imageUri = selectedImageUri?.toString()
-                            )
-                        )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+
+                ) {
+                if (uiState.isEditMode) {
+                    IconButton(
+                        onClick = {
+                            uiState.id?.let {
+                                viewModel.deleteRecipe(it)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 20.dp)
+                    ) {
+                        Icon(Icons.Default.Clear, contentDescription = null)
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-            ) {
-                Icon(Icons.Default.Save, contentDescription = null)
+                }
+                IconButton(
+                    onClick = {
+                        viewModel.saveRecipe()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(bottom = 20.dp)
+                ) {
+                    Icon(Icons.Default.Save, contentDescription = null)
+                }
             }
         }
-    ) { it ->
-        Column(Modifier.padding(it)) {
+    ) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
             TextField(
+                value = uiState.name,
                 label = { Text("name") },
+                onValueChange = { viewModel.updateName(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
                     .clip(shape = RoundedCornerShape(30)),
-                value = name,
-                onValueChange = {
-                    name = it
+
+                )
+            RecipeAddSection(
+                ingredients = uiState.ingredients,
+                onAddIngredient = {
+                    viewModel.addIngredient(it)
+                },
+                onRemoveIngredient = {
+                    viewModel.removeIngredient(it)
                 }
             )
-            RecipeAddSection { ingredient ->
-                ingredients += ingredient
-            }
-            AddInstruction {
-                instruction = it
+            AddInstruction(uiState.instruction) {
+                viewModel.updateInstruction(it)
             }
             RecipeAddImage(
-                selectedImageUri = selectedImageUri,
-                onImageSelected = { selectedImageUri = it }
+                selectedImageUri = uiState.imageUri,
+                onImageSelected = { viewModel.updateImage(it) }
             )
 
         }
@@ -199,12 +229,13 @@ fun RecipeAddImage(
 }
 
 @Composable
-fun RecipeAddSection(onSaveClick: (String) -> Unit) {
-    val ingredients = remember {
-        mutableStateListOf<String>()
-    }
-    var showTextField by remember { mutableStateOf(false) }
-    var currentIngredient by remember { mutableStateOf("test") }
+fun RecipeAddSection(
+    ingredients: List<String>,
+    onAddIngredient: (String) -> Unit,
+    onRemoveIngredient: (String) -> Unit
+) {
+    var showTextField by remember { mutableStateOf(true) }
+    var currentIngredient by remember { mutableStateOf("") }
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -242,12 +273,14 @@ fun RecipeAddSection(onSaveClick: (String) -> Unit) {
                     onValueChange = {
                         currentIngredient = it
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(shape = RoundedCornerShape(30))
                 )
                 IconButton(
                     onClick = {
-                        onSaveClick(currentIngredient)
-                        ingredients += currentIngredient
+                        onAddIngredient(currentIngredient)
+                        currentIngredient = ""
                     },
                     Modifier
                         .padding(horizontal = 10.dp)
@@ -257,9 +290,7 @@ fun RecipeAddSection(onSaveClick: (String) -> Unit) {
 
             }
         }
-        Ingredients(ingredients) {
-            ingredients.remove(it)
-        }
+        Ingredients(ingredients, onDeleteClick = onRemoveIngredient)
 
     }
 }
@@ -302,10 +333,12 @@ fun Ingredients(ingredients: List<String>, onDeleteClick: (String) -> Unit) {
 }
 
 @Composable
-fun AddInstruction(onSaveClick: (String) -> Unit) {
+fun AddInstruction(instruction: String, onSaveClick: (String) -> Unit) {
     var showTextField by remember { mutableStateOf(true) }
-    var currentInstruction by remember { mutableStateOf("") }
-    var currentIcon by remember { mutableStateOf(Icons.Default.Add) }
+    var currentInstruction by remember(instruction) {
+        mutableStateOf(instruction)
+    }
+    var isSaved by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -342,7 +375,7 @@ fun AddInstruction(onSaveClick: (String) -> Unit) {
                     value = currentInstruction,
                     onValueChange = {
                         currentInstruction = it
-                        currentIcon = Icons.Default.Add
+                        isSaved = false
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -351,12 +384,15 @@ fun AddInstruction(onSaveClick: (String) -> Unit) {
                 IconButton(
                     onClick = {
                         onSaveClick(currentInstruction)
-                        currentIcon = Icons.Default.Check
+                        isSaved = true
                     },
                     Modifier
                         .padding(horizontal = 10.dp)
                 ) {
-                    Icon(imageVector = currentIcon, contentDescription = null)
+                    Icon(
+                        imageVector = if (isSaved) Icons.Default.Check else Icons.Default.Add,
+                        contentDescription = null
+                    )
                 }
             }
 
@@ -373,7 +409,9 @@ fun IngredientsPreview() {
 @Preview
 @Composable
 fun RecipeAddPreview() {
-    RecipeAddScreen({}, {})
+    RecipeAddScreen(
+        onBackClick = {},
+        recipeId = 10,
+    )
 }
-
 

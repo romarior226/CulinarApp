@@ -2,7 +2,7 @@ package com.example.culinarapp.domain.models
 
 
 data class Recipe(
-    val id: Int = 0,
+    val id: Long = 0,
     val name: String,
     val category: Category = Category.TASTY,
     val imageUri: String? = null,

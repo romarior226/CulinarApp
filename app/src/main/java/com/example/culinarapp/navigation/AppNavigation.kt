@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.culinarapp.presentation.EditRecipeViewModel
 import com.example.culinarapp.presentation.ui.components.ColumnOfCulinaryBoards
 import com.example.culinarapp.presentation.RecipeListViewModel
 import com.example.culinarapp.presentation.ui.screen.RecipeAddScreen
@@ -35,18 +36,17 @@ fun AppNavGraph(
                     recipeViewModel.toggleFavourite(it)
                 },
                 onSwipeElement = {
-                    recipeViewModel.deleteRecipe(it)
+                    recipeViewModel.deleteRecipe(it.id)
                 },
+                onEditClickListener = {
+                    navHostController.navigate(Screen.EditScreen.getRouteWithArgs(it.id))
+                }
             )
 
         }
         composable(Screen.AddScreen.route) {
             RecipeAddScreen(
-                onBackClick = { navHostController.popBackStack() },
-                onSaveClick = { recipe ->
-                    recipeViewModel.addRecipe(recipe)
-                    navHostController.popBackStack()
-                },
+                onBackClick = { navHostController.popBackStack() }
             )
         }
         composable(Screen.FavouriteScreen.route) {
@@ -63,7 +63,10 @@ fun AppNavGraph(
                 onSwipeElement = {
 
                 },
-                isSwiped = false
+                isSwiped = false,
+                onEditClickListener = {
+                    navHostController.navigate(Screen.EditScreen.getRouteWithArgs(it.id))
+                }
             )
         }
         composable(
@@ -79,6 +82,18 @@ fun AppNavGraph(
                     navHostController.popBackStack()
                 }
             }
+        }
+        composable(
+            route = Screen.EditScreen.route,
+            arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
+        ) { navBackStackEntry ->
+            val recipeId = navBackStackEntry.arguments?.getLong("recipeId")
+            RecipeAddScreen(
+                onBackClick = {
+                    navHostController.popBackStack()
+                },
+                recipeId = recipeId
+            )
         }
     }
 }

@@ -15,6 +15,13 @@ sealed class Screen(
 
         }
     }
+    object EditScreen : Screen(EDIT_SCREEN) {
+        const val ROUTE_FOR_ARGS = "edit_screen"
+
+        fun getRouteWithArgs(recipeId : Long): String {
+            return "$ROUTE_FOR_ARGS/$recipeId"
+        }
+    }
 
     companion object {
 
@@ -22,5 +29,7 @@ sealed class Screen(
         const val FAVOURITE_SCREEN = "favourite_screen"
         const val LIST_SCREEN = "list_screen"
         const val DETAILED_SCREEN = "detailed_screen/{recipeName}"
+
+        const val EDIT_SCREEN = "edit_screen/{recipeId}"
     }
 }

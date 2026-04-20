@@ -40,9 +40,9 @@ class RecipeListViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun deleteRecipe(recipe: Recipe) {
+    fun deleteRecipe(recipeId: Long) {
         viewModelScope.launch {
-            deleteRecipeUseCase(recipe)
+            deleteRecipeUseCase(recipeId)
         }
     }
 

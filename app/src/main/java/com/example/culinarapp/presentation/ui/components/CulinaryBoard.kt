@@ -3,6 +3,7 @@ package com.example.culinarapp.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,18 +43,22 @@ import com.example.culinarapp.domain.models.Recipe
 fun CulinaryBoard(
     recipe: Recipe,
     onRecipeClickListener: (Recipe) -> Unit,
-    onFavouriteClickListener: (Recipe) -> Unit
+    onFavouriteClickListener: (Recipe) -> Unit,
+    onEditClickListener: (Recipe) -> Unit
 ) {
     val imageUri = recipe.imageUri
     Card(
         modifier = Modifier
-            .padding(10.dp)
-            .clickable(
-                enabled = true,
+            .combinedClickable(
                 onClick = {
                     onRecipeClickListener(recipe)
-                }
+                },
+                onLongClick = {
+                    onEditClickListener(recipe)
+                },
             )
+            .padding(10.dp)
+
 
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -115,6 +120,7 @@ fun Preview() {
     CulinaryBoard(
         recipe = Recipe(name = "Test"),
         onRecipeClickListener = {},
-        onFavouriteClickListener = {}
+        onFavouriteClickListener = {},
+        {}
     )
 }

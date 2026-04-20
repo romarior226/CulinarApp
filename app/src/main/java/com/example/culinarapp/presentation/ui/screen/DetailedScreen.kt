@@ -139,6 +139,7 @@ fun RecipeSection(title: String, content: @Composable () -> Unit) {
 fun RecipePreview() {
     val mockRecipe = Recipe(
         name = "Український Борщ",
+        ingridients = listOf("test1", "test2")
     )
     MaterialTheme {
         RecipeDetailScreen(recipe = mockRecipe, onBackClick = {})

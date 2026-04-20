@@ -27,6 +27,7 @@ fun ColumnOfCulinaryBoards(
     recipeList: List<Recipe>,
     onRecipeClickListener: (Recipe) -> Unit,
     onFavouriteClickListener: (Recipe) -> Unit,
+    onEditClickListener: (Recipe) -> Unit,
     isSwiped: Boolean = true,
     onSwipeElement: (Recipe) -> Unit
 ) {
@@ -78,7 +79,12 @@ fun ColumnOfCulinaryBoards(
                     },
                 )
                 {
-                    CulinaryBoard(recipe, onRecipeClickListener, onFavouriteClickListener)
+                    CulinaryBoard(
+                        recipe,
+                        onRecipeClickListener,
+                        onFavouriteClickListener,
+                        onEditClickListener
+                    )
                 }
             }
         }
@@ -103,7 +109,8 @@ fun PreviewBoards() {
         ),
         onRecipeClickListener = {},
         onFavouriteClickListener = { },
-        false,
-        {}
+        isSwiped = true,
+        onEditClickListener = {},
+        onSwipeElement = {},
     )
 }

@@ -5,11 +5,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface RecipeRepository {
 
+    suspend fun getRecipeById(id: Long): Recipe
     fun getAllRecipeListAsFlow() : Flow<List<Recipe>>
 
     suspend fun addRecipe(recipe: Recipe): Long
 
-    suspend fun deleteRecipe(recipe: Recipe)
+    suspend fun deleteRecipe(recipeID: Long)
 
     suspend fun updateRecipe(recipe: Recipe)
 }

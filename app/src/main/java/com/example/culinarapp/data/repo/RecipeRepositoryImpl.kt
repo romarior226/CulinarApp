@@ -1,7 +1,10 @@
-package com.example.culinarapp.data
+package com.example.culinarapp.data.repo
 
 import android.content.Context
 import android.net.Uri
+import com.example.culinarapp.data.dao.RecipeDao
+import com.example.culinarapp.data.toDbModel
+import com.example.culinarapp.data.toModel
 import com.example.culinarapp.domain.RecipeRepository
 import com.example.culinarapp.domain.models.Recipe
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,14 +21,14 @@ class RecipeRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : RecipeRepository {
 
-    fun getAllRecipeDbModelList(): Flow<List<RecipeDbModel>> {
-        return recipeDao.getAllRecipes()
+    override suspend fun getRecipeById(id: Long): Recipe {
+        return recipeDao.getRecipeById(id).toModel()
     }
 
     override fun getAllRecipeListAsFlow(): Flow<List<Recipe>> {
         return recipeDao.getAllRecipes().map { list ->
             list.map {
-                it.toEntity()
+                it.toModel()
             }
         }
     }
@@ -39,15 +42,15 @@ class RecipeRepositoryImpl @Inject constructor(
         val recipeToSave = recipe.copy(imageUri = permanentImagePath)
 
         // 3. ТІЛЬКИ ТЕПЕР викликаємо твій мапер і пишемо в базу!
-        return recipeDao.insertExpense(recipeToSave.toDbModel())
+        return recipeDao.insertRecipe(recipeToSave.toDbModel())
     }
 
-    override suspend fun deleteRecipe(recipe: Recipe) {
-        recipeDao.deleteExpense(recipe.toDbModel())
+    override suspend fun deleteRecipe(recipeID: Long) {
+        recipeDao.deleteRecipe(recipeID)
     }
 
     override suspend fun updateRecipe(recipe: Recipe) {
-        recipeDao.updateExpense(recipe.toDbModel())
+        recipeDao.updateRecipe(recipe.toDbModel())
     }
 
     // А ОСЬ ТУТ - сама функція, яка фізично копіює файл (щоб картинка не зникала)
